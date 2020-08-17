@@ -1,0 +1,135 @@
+version: 2
+
+jobs:
+  test:
+    docker:
+      - image: golang:1.15-buster
+        environment:
+          GO111MODULE: "on"
+    working_directory: /go/src/github.com/opencars/alpr
+    steps:
+      - checkout
+
+      - run:
+          name: "Install deps"
+          command: |
+            apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+                build-essential \
+                cmake \
+                curl \
+                git \
+                libcurl3-dev \
+                libleptonica-dev \
+                liblog4cplus-dev \
+                libopencv-dev \
+                libtesseract-dev \
+                wget
+
+      - run:
+          name: "Install OpenALPR"
+          command: |
+            git clone https://github.com/openalpr/openalpr /openalpr
+
+            mkdir /openalpr/src/build
+            cd /openalpr/src/build
+
+            cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_INSTALL_SYSCONFDIR:PATH=/etc .. && \
+              make -j2 && \
+              make install
+
+      - restore_cache:
+         key: go-mod-v1-{{ checksum "go.sum" }}
+
+      - run:
+          name: "Install Dependencies"
+          command: "go mod download"
+
+      - save_cache:
+          key: go-mod-v1-{{ checksum "go.sum" }}
+          paths:
+            - "/go/pkg/mod"
+
+      - run:
+          name: "Run Tests"
+          command: "go test -v ./..."
+
+      - run:
+          name: "Lint Code"
+          environment:
+            GO111MODULE: "on"
+          command: |
+            go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.26.0
+            golangci-lint run
+
+      - run:
+          name: Build Project Binary
+          command: |
+            go build -o /go/bin/server ./cmd/server/main.go
+
+  release:
+    docker:
+      - image: circleci/golang:1.15
+        environment:
+          GO111MODULE: "off"
+          USER_NAME: "Ali Shanaakh"
+          USER_EMAIL: "github@shal.dev"
+    steps:
+      - checkout
+
+      - run:
+          name: "Set Git Configuration"
+          command: |
+            git config --global user.name "${USER_NAME}"
+            git config --global user.email "${USER_EMAIL}"
+
+      - run:
+          name: "Bump Version"
+          command: |
+            go get github.com/Clever/gitsem
+            gitsem -m "[ci skip] Bump version to %s" patch
+
+      - run:
+          name: "Release Version"
+          command: |
+            git remote add authenticated-origin https://${GITHUB_USER}:${GITHUB_API_KEY}@github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}
+            git push --tags authenticated-origin HEAD:${CIRCLE_BRANCH}
+  build:
+    machine: true
+    steps:
+      - checkout
+
+      - run:
+          name: "Login to quay.io"
+          command: |
+            docker login -u=${DOCKER_USER} -p=${DOCKER_PASSWORD} quay.io
+
+      - run:
+          name: "Build Docker Image"
+          command: |
+            docker build -t quay.io/opencars/alpr:${CIRCLE_TAG} .
+            docker build -t quay.io/opencars/alpr .
+
+      - run:
+          name: "Push Docker Image"
+          command: |
+            docker push quay.io/opencars/alpr:${CIRCLE_TAG}
+            docker push quay.io/opencars/alpr
+workflows:
+  version: 2
+  test-relase-build:
+    jobs:
+      - test
+      - release:
+          context: github
+          requires:
+            - test
+          filters:
+            branches:
+              only: master
+      - build:
+          context: docker
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
