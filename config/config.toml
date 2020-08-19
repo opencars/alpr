@@ -1,5 +1,5 @@
 [openalpr]
-max_number = 50
+max_number = 5
 country = "eu"
 config_file = "/usr/share/openalpr/config/openalpr.defaults.conf"
 runtime_dir = "/usr/share/openalpr/runtime_data"

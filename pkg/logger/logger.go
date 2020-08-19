@@ -1,6 +1,8 @@
 package logger
 
-import "os"
+import (
+	"os"
+)
 
 // A global variable so that log functions can be directly accessed
 var Log Logger

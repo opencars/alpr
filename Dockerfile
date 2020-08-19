@@ -35,8 +35,7 @@ RUN go mod download
 
 COPY . .
 
-RUN export VERSION=$(cat VERSION) && \
-    go build -ldflags "-X github.com/opencars/alpr/pkg/version.Version=$VERSION" -o /go/bin/server ./cmd/server/main.go
+RUN make build
 
 WORKDIR /go/bin
 

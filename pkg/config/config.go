@@ -1,6 +1,8 @@
 package config
 
-import "github.com/BurntSushi/toml"
+import (
+	"github.com/BurntSushi/toml"
+)
 
 // Config represents mix of settings for the app.
 type Config struct {

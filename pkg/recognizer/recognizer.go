@@ -2,10 +2,9 @@ package recognizer
 
 import (
 	"io"
-
-	"github.com/openalpr/openalpr/src/bindings/go/openalpr"
 )
 
+// Recognizer ...
 type Recognizer interface {
-	Recognize(r io.Reader) (*openalpr.AlprResults, error)
+	Recognize(r io.Reader) ([]Result, error)
 }

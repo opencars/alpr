@@ -10,11 +10,9 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 
-	"github.com/opencars/alpr/pkg/recognizer"
-
-	"github.com/opencars/alpr/pkg/version"
-
 	"github.com/opencars/alpr/pkg/handler"
+	"github.com/opencars/alpr/pkg/recognizer"
+	"github.com/opencars/alpr/pkg/version"
 )
 
 type server struct {

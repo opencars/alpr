@@ -1,7 +1,7 @@
 package openalpr
 
 import (
-	"errors"
+	"github.com/opencars/alpr/pkg/recognizer"
 	"io"
 	"io/ioutil"
 	"sync"
@@ -12,16 +12,18 @@ import (
 	"github.com/opencars/alpr/pkg/logger"
 )
 
+// Recognizer is a pool of OpenALPR instances for recognizing the car plates.
 type Recognizer struct {
 	pool *sync.Pool
 }
 
+// New returns new instance of vehicle plates recognizer.
 func New(conf *config.OpenALPR) (*Recognizer, error) {
 	var pool = sync.Pool{
 		New: func() interface{} {
 			alpr := openalpr.NewAlpr(conf.Country, conf.ConfigFile, conf.RuntimeDir)
 			if !alpr.IsLoaded() {
-				return errors.New("openalpr: failed to load")
+				return nil
 			}
 
 			alpr.SetTopN(conf.MaxNumber)
@@ -35,8 +37,14 @@ func New(conf *config.OpenALPR) (*Recognizer, error) {
 	}, nil
 }
 
-func (r *Recognizer) Recognize(reader io.Reader) (*openalpr.AlprResults, error) {
+// Recognize returns result of car plates recognition.
+// Accepts io.Reader from JPEG.
+func (r *Recognizer) Recognize(reader io.Reader) ([]recognizer.Result, error) {
 	alpr := r.pool.Get().(*openalpr.Alpr)
+	if alpr == nil {
+		return nil, recognizer.ErrFailedToLoad
+	}
+
 	defer r.pool.Put(alpr)
 
 	content, err := ioutil.ReadAll(reader)
@@ -49,5 +57,29 @@ func (r *Recognizer) Recognize(reader io.Reader) (*openalpr.AlprResults, error) 
 		return nil, err
 	}
 
-	return &res, nil
+	return asRecognizerResult(&res), nil
+}
+
+func asRecognizerResult(in *openalpr.AlprResults) []recognizer.Result {
+	out := make([]recognizer.Result, len(in.Plates))
+
+	for i, plate := range in.Plates {
+		out[i].Plate = plate.BestPlate
+
+		for _, candidate := range plate.TopNPlates {
+			out[i].Candidates = append(out[i].Candidates, recognizer.Candidate{
+				Confidence: candidate.OverallConfidence,
+				Plate:      candidate.Characters,
+			})
+		}
+
+		for _, point := range plate.PlatePoints {
+			out[i].Coordinates = append(out[i].Coordinates, recognizer.Coordinate{
+				X: point.X,
+				Y: point.Y,
+			})
+		}
+	}
+
+	return out
 }

@@ -1,6 +1,8 @@
 package handler
 
-import "net/http"
+import (
+	"net/http"
+)
 
 var (
 	ErrRequiredImageURL = NewError(http.StatusBadRequest, "request.image_url_required")

@@ -1,6 +1,8 @@
 package config
 
-import "time"
+import (
+	"time"
+)
 
 // Duration represents custom type for unmarshaling string.
 // For example: "500ms", "1s", "2m", etc.
