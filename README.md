@@ -1,12 +1,9 @@
 # ALPR
 
-[godoc]: https://godoc.org/github.com/opencars/alpr
-[godoc-img]: https://godoc.org/github.com/opencars/alpr?status.svg
 [goreport]: https://goreportcard.com/report/github.com/opencars/alpr
 [goreport-img]: https://goreportcard.com/badge/github.com/opencars/alpr
 [version]: https://img.shields.io/github/v/tag/opencars/alpr?sort=semver
 
-[![Docs][godoc-img]][godoc]
 [![Go Report][goreport-img]][goreport]
 [![Version][version]][version]
 
