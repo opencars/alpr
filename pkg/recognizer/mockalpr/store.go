@@ -5,11 +5,10 @@
 package mockalpr
 
 import (
+	gomock "github.com/golang/mock/gomock"
+	recognizer "github.com/opencars/alpr/pkg/recognizer"
 	io "io"
 	reflect "reflect"
-
-	gomock "github.com/golang/mock/gomock"
-	openalpr "github.com/openalpr/openalpr/src/bindings/go/openalpr"
 )
 
 // MockRecognizer is a mock of Recognizer interface
@@ -36,10 +35,10 @@ func (m *MockRecognizer) EXPECT() *MockRecognizerMockRecorder {
 }
 
 // Recognize mocks base method
-func (m *MockRecognizer) Recognize(arg0 io.Reader) (*openalpr.AlprResults, error) {
+func (m *MockRecognizer) Recognize(arg0 io.Reader) ([]recognizer.Result, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Recognize", arg0)
-	ret0, _ := ret[0].(*openalpr.AlprResults)
+	ret0, _ := ret[0].([]recognizer.Result)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
