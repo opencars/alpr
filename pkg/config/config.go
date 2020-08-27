@@ -19,11 +19,13 @@ type Server struct {
 	IdleTimeout     Duration `toml:"idle_timeout"`
 }
 
+// Log represents settings for application logger.
 type Log struct {
 	Level string `toml:"level"`
 	Mode  string `toml:"mode"`
 }
 
+// OpenALPR represents settings for openalpr car plates recognizer.
 type OpenALPR struct {
 	Country    string `toml:"country"`
 	ConfigFile string `toml:"config_file"`

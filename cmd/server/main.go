@@ -20,15 +20,16 @@ func main() {
 
 	flag.Parse()
 
-	// Get configuration.
 	conf, err := config.New(configPath)
 	if err != nil {
-		logger.Fatal(err)
+		logger.Fatalf("failed read config: %v", err)
 	}
+
+	logger.NewLogger(logger.LogLevel(conf.Log.Level), conf.Log.Mode == "dev")
 
 	recognizer, err := openalpr.New(&conf.OpenALPR)
 	if err != nil {
-		logger.Fatal(err)
+		logger.Fatalf("failed to initialize recognizer: %v", err)
 	}
 
 	c := make(chan os.Signal, 1)
@@ -41,8 +42,8 @@ func main() {
 	}()
 
 	addr := ":8080"
-	logger.Info("Listening on %s...", addr)
+	logger.Infof("Listening on %s...", addr)
 	if err := http.Start(ctx, addr, recognizer); err != nil {
-		logger.Fatal(err)
+		logger.Fatalf("http server failed: %v", err)
 	}
 }

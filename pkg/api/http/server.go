@@ -22,7 +22,7 @@ type server struct {
 }
 
 func newServer(recognizer recognizer.Recognizer) *server {
-	s := &server{
+	s := server{
 		router:     mux.NewRouter(),
 		recognizer: recognizer,
 		client: &http.Client{
@@ -32,7 +32,7 @@ func newServer(recognizer recognizer.Recognizer) *server {
 
 	s.configureRouter()
 
-	return s
+	return &s
 }
 
 func (s *server) configureRouter() {
@@ -68,11 +68,7 @@ func (*server) Version() handler.Handler {
 			Go:      runtime.Version(),
 		}
 
-		if err := json.NewEncoder(w).Encode(v); err != nil {
-			return err
-		}
-
-		return nil
+		return json.NewEncoder(w).Encode(v)
 	}
 }
 
@@ -99,10 +95,6 @@ func (s *server) Recognize() handler.Handler {
 			return err
 		}
 
-		if err := json.NewEncoder(w).Encode(res); err != nil {
-			return err
-		}
-
-		return nil
+		return json.NewEncoder(w).Encode(res)
 	}
 }

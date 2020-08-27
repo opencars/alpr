@@ -31,17 +31,17 @@ func main() {
 	// Get configuration.
 	conf, err := config.New(configPath)
 	if err != nil {
-		logger.Fatal(err)
+		logger.Fatalf("failed to read config: %v", err)
 	}
 
 	recognizer, err := openalpr.New(&conf.OpenALPR)
 	if err != nil {
-		logger.Fatal(err)
+		logger.Fatalf("failed to initialize recognizer: %v", err)
 	}
 
 	resp, err := http.Get(imageURL)
 	if err != nil {
-		logger.Fatal(err)
+		logger.Fatalf("error: %v", err)
 	}
 
 	var body bytes.Buffer
@@ -49,12 +49,12 @@ func main() {
 
 	results, err := recognizer.Recognize(dup)
 	if err != nil {
-		logger.Fatal(err)
+		logger.Fatalf("error: %v", err)
 	}
 
 	img, _, err := image.Decode(&body)
 	if err != nil {
-		logger.Fatal(err)
+		logger.Fatalf("error: %v", err)
 	}
 
 	m := image.NewRGBA(img.Bounds())
@@ -93,7 +93,7 @@ func main() {
 
 	err = jpeg.Encode(toimg, m, &jpeg.Options{Quality: jpeg.DefaultQuality})
 	if err != nil {
-		logger.Fatal(err)
+		logger.Fatalf("error: %v", err)
 	}
 
 }
