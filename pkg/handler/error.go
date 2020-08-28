@@ -5,8 +5,11 @@ import (
 )
 
 var (
+	// ErrRequiredImageURL returned, if image_url paramter does not present in request.
 	ErrRequiredImageURL = NewError(http.StatusBadRequest, "request.image_url_required")
-	ErrInvalidImageURL  = NewError(http.StatusBadRequest, "request.image_url_invalid")
+
+	// ErrInvalidImageURL returned, if image_url is not a valid URL.
+	ErrInvalidImageURL = NewError(http.StatusBadRequest, "request.image_url_invalid")
 )
 
 // Error represents a handler error. It provides methods for a HTTP status
