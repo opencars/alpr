@@ -67,12 +67,12 @@ func asRecognizerResult(in *openalpr.AlprResults) []recognizer.Result {
 	for i, plate := range in.Plates {
 		out[i].Plate = plate.BestPlate
 
-		for _, candidate := range plate.TopNPlates {
-			out[i].Candidates = append(out[i].Candidates, recognizer.Candidate{
-				Confidence: candidate.OverallConfidence,
-				Plate:      candidate.Characters,
-			})
-		}
+		//for _, candidate := range plate.TopNPlates {
+		//	out[i].Candidates = append(out[i].Candidates, recognizer.Candidate{
+		//		Confidence: candidate.OverallConfidence,
+		//		Plate:      candidate.Characters,
+		//	})
+		//}
 
 		for _, point := range plate.PlatePoints {
 			out[i].Coordinates = append(out[i].Coordinates, recognizer.Coordinate{

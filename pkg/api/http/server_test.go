@@ -22,7 +22,7 @@ func TestServer_Recognize(t *testing.T) {
 	recognizer := mockalpr.NewMockRecognizer(ctrl)
 	recognizer.EXPECT().Recognize(gomock.Any()).Return(nil, nil)
 
-	srv := newServer(recognizer)
+	srv := newServer(recognizer, nil)
 
 	imageURL := "https://example.com/vehicle.jpg"
 	path := fmt.Sprintf("/api/v1/alpr/private/recognize?image_url=%s", imageURL)

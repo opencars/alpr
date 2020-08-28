@@ -9,6 +9,7 @@ type Config struct {
 	Log      Log      `toml:"log"`
 	Server   Server   `toml:"server"`
 	OpenALPR OpenALPR `toml:"openalpr"`
+	S3       S3       `toml:"s3"`
 }
 
 // Server represents settings for creating http server.
@@ -31,6 +32,15 @@ type OpenALPR struct {
 	ConfigFile string `toml:"config_file"`
 	RuntimeDir string `toml:"runtime_dir"`
 	MaxNumber  int    `toml:"max_number"`
+}
+
+// S3 represents settings for s3 storage.
+type S3 struct {
+	Endpoint        string `toml:"endpoint"`
+	AccessKeyID     string `toml:"access_key_id"`
+	SecretAccessKey string `toml:"secret_access_key"`
+	SSL             bool   `toml:"ssl"`
+	Bucket          string `toml:"bucket"`
 }
 
 // New creates reads application configuration from the file.

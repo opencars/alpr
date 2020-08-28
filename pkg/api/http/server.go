@@ -1,9 +1,12 @@
 package http
 
 import (
+	"bytes"
 	"encoding/json"
+	"io"
 	"net/http"
 	"net/url"
+	"path"
 	"runtime"
 	"time"
 
@@ -11,20 +14,24 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/opencars/alpr/pkg/handler"
+	"github.com/opencars/alpr/pkg/logger"
+	"github.com/opencars/alpr/pkg/objectstore"
 	"github.com/opencars/alpr/pkg/recognizer"
 	"github.com/opencars/alpr/pkg/version"
 )
 
 type server struct {
-	router     *mux.Router
-	client     *http.Client
-	recognizer recognizer.Recognizer
+	router      *mux.Router
+	client      *http.Client
+	recognizer  recognizer.Recognizer
+	objectStore objectstore.ObjectStore
 }
 
-func newServer(recognizer recognizer.Recognizer) *server {
+func newServer(recognizer recognizer.Recognizer, objectStore objectstore.ObjectStore) *server {
 	s := server{
-		router:     mux.NewRouter(),
-		recognizer: recognizer,
+		router:      mux.NewRouter(),
+		recognizer:  recognizer,
+		objectStore: objectStore,
 		client: &http.Client{
 			Timeout: 5 * time.Second,
 		},
@@ -72,6 +79,7 @@ func (*server) Version() handler.Handler {
 	}
 }
 
+// Note: Later we could publish event of recognition into the NATS queue and prepare.
 func (s *server) Recognize() handler.Handler {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		imageURL := r.URL.Query().Get("image_url")
@@ -90,9 +98,20 @@ func (s *server) Recognize() handler.Handler {
 		}
 		defer resp.Body.Close()
 
-		res, err := s.recognizer.Recognize(resp.Body)
+		var buf bytes.Buffer
+		tee := io.TeeReader(resp.Body, &buf)
+
+		res, err := s.recognizer.Recognize(tee)
 		if err != nil {
 			return err
+		}
+
+		if len(res) > 0 && s.objectStore != nil {
+			ext := path.Ext(imageURL)
+			err := s.objectStore.Put(r.Context(), res[0].Plate+ext, &buf)
+			if err != nil {
+				logger.Errorf("failed to put: %v", err)
+			}
 		}
 
 		return json.NewEncoder(w).Encode(res)

@@ -1,20 +1,20 @@
 package recognizer
 
-// Coordinate ...
+// Coordinate represents
 type Coordinate struct {
 	X int `json:"x"`
 	Y int `json:"y"`
 }
 
-// Candidate ...
+// Candidate represents recognized car plate candidate.
 type Candidate struct {
 	Confidence float32 `json:"confidence"`
 	Plate      string  `json:"plate"`
 }
 
-// Result ...
+// Result represents result of recognition.
 type Result struct {
+	// Candidates  []Candidate  `json:"candidates"`
 	Coordinates []Coordinate `json:"coordinates"`
-	Candidates  []Candidate  `json:"candidates"`
 	Plate       string       `json:"plate"`
 }
