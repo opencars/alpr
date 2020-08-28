@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"github.com/opencars/alpr/pkg/objectstore/minio"
 	"os"
 	"os/signal"
 	"syscall"
@@ -20,29 +21,37 @@ func main() {
 
 	flag.Parse()
 
-	// Get configuration.
 	conf, err := config.New(configPath)
 	if err != nil {
-		logger.Fatal(err)
+		logger.Fatalf("failed read config: %v", err)
 	}
+
+	logger.NewLogger(logger.LogLevel(conf.Log.Level), conf.Log.Mode == "dev")
 
 	recognizer, err := openalpr.New(&conf.OpenALPR)
 	if err != nil {
-		logger.Fatal(err)
+		logger.Fatalf("failed to initialize recognizer: %v", err)
+	}
+
+	objStore, err := minio.New(&conf.S3)
+	if err != nil {
+		logger.Fatalf("failed to object store: %v", err)
 	}
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
 
 	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	go func() {
 		<-c
 		cancel()
 	}()
 
 	addr := ":8080"
-	logger.Info("Listening on %s...", addr)
-	if err := http.Start(ctx, addr, recognizer); err != nil {
-		logger.Fatal(err)
+	logger.Infof("Listening on %s...", addr)
+	if err := http.Start(ctx, addr, &conf.Server, recognizer,objStore ); err != nil {
+		logger.Fatalf("http server failed: %v", err)
 	}
 }
