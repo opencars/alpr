@@ -30,7 +30,6 @@ ENV GO111MODULE=on
 WORKDIR /go/src/app
 
 COPY go.mod go.sum ./
-
 RUN go mod download
 
 COPY . .
@@ -39,9 +38,9 @@ COPY ./config/ua.conf /usr/share/openalpr/runtime_data/config/ua.conf
 COPY ./config/ua.patterns /usr/share/openalpr/runtime_data/postprocess/ua.patterns
 RUN cp /usr/share/openalpr/runtime_data/region/eu.xml /usr/share/openalpr/runtime_data/region/ua.xml
 
-RUN make build
+RUN BLDDIR=/app make build
 
-WORKDIR /go/bin
+WORKDIR /app
 
 COPY ./config ./config
 EXPOSE 8080
