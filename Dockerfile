@@ -1,4 +1,4 @@
-FROM quay.io/opencars/openalpr AS openalpr
+FROM quay.io/opencars/openalpr:alpine AS openalpr
 FROM golang:1.15-alpine AS build
 
 RUN apk update && apk upgrade && apk add --no-cache ca-certificates tesseract-ocr-dev tiff-dev zlib-dev libpng-dev jpeg-dev make gcc build-base
