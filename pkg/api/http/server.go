@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"io"
+	"net"
 	"net/http"
 	"net/url"
-	"path"
 	"runtime"
 	"time"
 
@@ -20,6 +20,14 @@ import (
 	"github.com/opencars/alpr/pkg/version"
 )
 
+const (
+	// MaxImageSize equals to 5 MB.
+	MaxImageSize = 5 << 20
+
+	// ClientTimeOut equals to 10 seconds.
+	ClientTimeOut = 10 * time.Second
+)
+
 type server struct {
 	router      *mux.Router
 	client      *http.Client
@@ -28,25 +36,25 @@ type server struct {
 }
 
 func newServer(recognizer recognizer.Recognizer, objectStore objectstore.ObjectStore) *server {
+	httpClient := http.Client{
+		Timeout: ClientTimeOut,
+		Transport: &http.Transport{
+			DialContext: (&net.Dialer{
+				Timeout: ClientTimeOut,
+			}).DialContext,
+		},
+	}
+
 	s := server{
 		router:      mux.NewRouter(),
 		recognizer:  recognizer,
 		objectStore: objectStore,
-		client: &http.Client{
-			Timeout: 5 * time.Second,
-		},
+		client:      &httpClient,
 	}
 
 	s.configureRouter()
 
 	return &s
-}
-
-func (s *server) configureRouter() {
-	router := s.router.Methods("GET", "OPTIONS").Subrouter()
-
-	router.Handle("/api/v1/alpr/public/version", s.Version())
-	router.Handle("/api/v1/alpr/private/recognize", s.Recognize())
 }
 
 func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -98,20 +106,47 @@ func (s *server) Recognize() handler.Handler {
 		}
 		defer resp.Body.Close()
 
-		var buf bytes.Buffer
-		tee := io.TeeReader(resp.Body, &buf)
+		bodyWithLimit := io.LimitReader(resp.Body, MaxImageSize+1)
 
-		res, err := s.recognizer.Recognize(tee)
+		var buff bytes.Buffer
+		if _, err = io.CopyN(&buff, bodyWithLimit, bytes.MinRead); err != nil {
+			return err
+		}
+
+		typ := http.DetectContentType(buff.Bytes())
+		if typ != "image/jpeg" {
+			return handler.ErrUnknownContentType
+		}
+
+		_, err = buff.ReadFrom(bodyWithLimit)
+		if err != nil {
+			return err
+		}
+
+		if buff.Len() > MaxImageSize {
+			return handler.ErrImageTooLarge
+		}
+
+		reader := bytes.NewReader(buff.Bytes())
+
+		res, err := s.recognizer.Recognize(reader)
 		if err != nil {
 			return err
 		}
 
 		if len(res) > 0 && s.objectStore != nil {
-			ext := path.Ext(imageURL)
-			err := s.objectStore.Put(r.Context(), res[0].Plate+ext, &buf)
+			// Reset the read pointer.
+			_, err = reader.Seek(0, 0)
+			if err != nil {
+				return err
+			}
+
+			err := s.objectStore.Put(r.Context(), reader)
 			if err != nil {
 				logger.Errorf("failed to put: %v", err)
 			}
+
+			// TODO: Save number and URL to store!
 		}
 
 		return json.NewEncoder(w).Encode(res)

@@ -15,7 +15,7 @@ $(BLDDIR)/%:
 $(APPS): %: $(BLDDIR)/%
 
 lint:
-	@revive -formatter stylish -config=revive.toml ./...
+	@revive -formatter stylish -config=revive.yaml ./...
 
 clean:
 	@mkdir -p $(BLDDIR)
