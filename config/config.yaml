@@ -1,0 +1,23 @@
+log:
+  level: "debug"
+  mode:  "dev"
+
+openalpr:
+  pool: 10
+  max_number: 100
+  country: "ua"
+  config_file: "/usr/local/share/openalpr/config/openalpr.defaults.conf"
+  runtime_dir: "/usr/local/share/openalpr/runtime_data"
+
+server:
+  shutdown_timeout: "15s"
+  read_timeout: "10s"
+  write_timeout: "10s"
+  idle_timeout: "10s"
+
+s3:
+  endpoint: "ams3.digitaloceanspaces.com"
+  access_key_id: "minio"
+  secret_access_key: "minio"
+  ssl: true
+  bucket: "open-cars"

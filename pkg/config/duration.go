@@ -10,7 +10,7 @@ type Duration struct {
 	time.Duration
 }
 
-// UnmarshalText implements toml unmarshaler.
+// UnmarshalText implements yaml unmarshaler.
 func (d *Duration) UnmarshalText(text []byte) error {
 	var err error
 	d.Duration, err = time.ParseDuration(string(text))

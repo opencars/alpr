@@ -40,7 +40,7 @@ COPY ./config/ua.patterns /usr/local/share/openalpr/runtime_data/postprocess/ua.
 RUN cp /usr/local/share/openalpr/runtime_data/region/eu.xml /usr/local/share/openalpr/runtime_data/region/ua.xml
 
 COPY --from=build /go/bin/ ./
-COPY ./config/config.toml ./config/config.toml
+COPY ./config/config.yaml ./config/config.yaml
 
 EXPOSE 8080
 

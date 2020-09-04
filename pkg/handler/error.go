@@ -10,6 +10,12 @@ var (
 
 	// ErrInvalidImageURL returned, if image_url is not a valid URL.
 	ErrInvalidImageURL = NewError(http.StatusBadRequest, "request.image_url_invalid")
+
+	// ErrUnknownContentType returned, if provided image_url has unknown unsupported content type.
+	ErrUnknownContentType = NewError(http.StatusUnsupportedMediaType, "request.image.unknown_content_type")
+
+	// ErrImageTooLarge returned, if provided image is larger than 10 MB.
+	ErrImageTooLarge = NewError(http.StatusBadRequest, "request.image.too_large")
 )
 
 // Error represents a handler error. It provides methods for a HTTP status

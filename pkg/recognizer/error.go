@@ -1,6 +1,8 @@
 package recognizer
 
-import "errors"
+import (
+	"errors"
+)
 
 var (
 	// ErrFailedToLoad returned, if ALPR library failed to load.

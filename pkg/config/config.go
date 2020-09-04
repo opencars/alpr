@@ -1,52 +1,61 @@
 package config
 
 import (
-	"github.com/BurntSushi/toml"
+	"os"
+
+	"gopkg.in/yaml.v2"
 )
 
 // Config represents mix of settings for the app.
 type Config struct {
-	Log      Log      `toml:"log"`
-	Server   Server   `toml:"server"`
-	OpenALPR OpenALPR `toml:"openalpr"`
-	S3       S3       `toml:"s3"`
+	Log      Log      `yaml:"log"`
+	Server   Server   `yaml:"server"`
+	OpenALPR OpenALPR `yaml:"openalpr"`
+	S3       S3       `yaml:"s3"`
 }
 
 // Server represents settings for creating http server.
 type Server struct {
-	ShutdownTimeout Duration `toml:"shutdown_timeout"`
-	ReadTimeout     Duration `toml:"read_timeout"`
-	WriteTimeout    Duration `toml:"write_timeout"`
-	IdleTimeout     Duration `toml:"idle_timeout"`
+	ShutdownTimeout Duration `yaml:"shutdown_timeout"`
+	ReadTimeout     Duration `yaml:"read_timeout"`
+	WriteTimeout    Duration `yaml:"write_timeout"`
+	IdleTimeout     Duration `yaml:"idle_timeout"`
 }
 
 // Log represents settings for application logger.
 type Log struct {
-	Level string `toml:"level"`
-	Mode  string `toml:"mode"`
+	Level string `yaml:"level"`
+	Mode  string `yaml:"mode"`
 }
 
 // OpenALPR represents settings for openalpr car plates recognizer.
 type OpenALPR struct {
-	Country    string `toml:"country"`
-	ConfigFile string `toml:"config_file"`
-	RuntimeDir string `toml:"runtime_dir"`
-	MaxNumber  int    `toml:"max_number"`
+	Pool       int    `yaml:"pool"`
+	Country    string `yaml:"country"`
+	ConfigFile string `yaml:"config_file"`
+	RuntimeDir string `yaml:"runtime_dir"`
+	MaxNumber  int    `yaml:"max_number"`
 }
 
 // S3 represents settings for s3 storage.
 type S3 struct {
-	Endpoint        string `toml:"endpoint"`
-	AccessKeyID     string `toml:"access_key_id"`
-	SecretAccessKey string `toml:"secret_access_key"`
-	SSL             bool   `toml:"ssl"`
-	Bucket          string `toml:"bucket"`
+	Endpoint        string `yaml:"endpoint"`
+	AccessKeyID     string `yaml:"access_key_id"`
+	SecretAccessKey string `yaml:"secret_access_key"`
+	SSL             bool   `yaml:"ssl"`
+	Bucket          string `yaml:"bucket"`
 }
 
-// New creates reads application configuration from the file.
+// New reads application configuration from specified file path.
 func New(path string) (*Config, error) {
 	var config Config
-	if _, err := toml.DecodeFile(path, &config); err != nil {
+
+	f, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := yaml.NewDecoder(f).Decode(&config); err != nil {
 		return nil, err
 	}
 
