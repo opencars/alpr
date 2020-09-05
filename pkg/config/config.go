@@ -2,6 +2,7 @@ package config
 
 import (
 	"os"
+	"strconv"
 
 	"gopkg.in/yaml.v2"
 )
@@ -12,6 +13,7 @@ type Config struct {
 	Server   Server   `yaml:"server"`
 	OpenALPR OpenALPR `yaml:"openalpr"`
 	S3       S3       `yaml:"s3"`
+	DB       Database `yaml:"database"`
 }
 
 // Server represents settings for creating http server.
@@ -44,6 +46,21 @@ type S3 struct {
 	SecretAccessKey string `yaml:"secret_access_key"`
 	SSL             bool   `yaml:"ssl"`
 	Bucket          string `yaml:"bucket"`
+}
+
+// Database contains configuration details for database.
+type Database struct {
+	Host     string `yaml:"host"`
+	Port     int    `yaml:"port"`
+	User     string `yaml:"username"`
+	Password string `yaml:"password"`
+	Name     string `yaml:"database"`
+	SSLMode  string `yaml:"ssl_mode"`
+}
+
+// Address return API address in "host:port" format.
+func (db *Database) Address() string {
+	return db.Host + ":" + strconv.Itoa(db.Port)
 }
 
 // New reads application configuration from specified file path.

@@ -3,10 +3,6 @@ package minio
 import (
 	"bytes"
 	"context"
-	"crypto/md5"
-	"encoding/hex"
-	"fmt"
-	"io"
 
 	"github.com/minio/minio-go"
 
@@ -34,21 +30,7 @@ func New(s3 *config.S3) (*ObjectStore, error) {
 }
 
 // Put uploads new image to S3 bucket.
-func (s *ObjectStore) Put(ctx context.Context, r *bytes.Reader) error {
-	w := md5.New()
-
-	if _, err := io.Copy(w, r); err != nil {
-		return err
-	}
-
-	// Reset the read pointer.
-	_, err := r.Seek(0, 0)
-	if err != nil {
-		return err
-	}
-
-	key := fmt.Sprintf("plates/%s.jpeg", hex.EncodeToString(w.Sum(nil)))
-
+func (s *ObjectStore) Put(ctx context.Context, key string, r *bytes.Reader) error {
 	userMetaData := map[string]string{
 		"x-amz-acl": "public-read",
 	}
@@ -58,7 +40,7 @@ func (s *ObjectStore) Put(ctx context.Context, r *bytes.Reader) error {
 		ContentType:  "image/jpeg",
 	}
 
-	_, err = s.client.PutObjectWithContext(ctx, s.bucket, key, r, -1, opts)
+	_, err := s.client.PutObjectWithContext(ctx, s.bucket, key, r, -1, opts)
 	if err != nil {
 		return err
 	}

@@ -12,6 +12,7 @@ import (
 	"github.com/opencars/alpr/pkg/logger"
 	"github.com/opencars/alpr/pkg/objectstore/minio"
 	"github.com/opencars/alpr/pkg/recognizer/openalpr"
+	"github.com/opencars/alpr/pkg/store/sqlstore"
 )
 
 func main() {
@@ -35,7 +36,12 @@ func main() {
 
 	objStore, err := minio.New(&conf.S3)
 	if err != nil {
-		logger.Fatalf("failed to object store: %v", err)
+		logger.Fatalf("failed to initialize object store: %v", err)
+	}
+
+	sqlStore, err := sqlstore.New(&conf.DB)
+	if err != nil {
+		logger.Fatalf("failed to initialize store: %v", err)
 	}
 
 	c := make(chan os.Signal, 1)
@@ -51,7 +57,7 @@ func main() {
 
 	addr := ":8080"
 	logger.Infof("Listening on %s...", addr)
-	if err := http.Start(ctx, addr, &conf.Server, recognizer, objStore); err != nil {
+	if err := http.Start(ctx, addr, &conf.Server, recognizer, objStore, sqlStore); err != nil {
 		logger.Fatalf("http server failed: %v", err)
 	}
 }

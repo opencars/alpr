@@ -21,3 +21,11 @@ s3:
   secret_access_key: "minio"
   ssl: true
   bucket: "open-cars"
+
+database:
+  host: "127.0.0.1"
+  port: 5432
+  username: "postgres"
+  password: "password"
+  database: "alpr"
+  ssl_mode: "disable"
