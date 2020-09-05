@@ -2,7 +2,10 @@ package http
 
 import (
 	"bytes"
+	"crypto/md5"
+	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net"
 	"net/http"
@@ -17,6 +20,7 @@ import (
 	"github.com/opencars/alpr/pkg/logger"
 	"github.com/opencars/alpr/pkg/objectstore"
 	"github.com/opencars/alpr/pkg/recognizer"
+	"github.com/opencars/alpr/pkg/store"
 	"github.com/opencars/alpr/pkg/version"
 )
 
@@ -33,9 +37,10 @@ type server struct {
 	client      *http.Client
 	recognizer  recognizer.Recognizer
 	objectStore objectstore.ObjectStore
+	store       store.Store
 }
 
-func newServer(recognizer recognizer.Recognizer, objectStore objectstore.ObjectStore) *server {
+func newServer(recognizer recognizer.Recognizer, objectStore objectstore.ObjectStore, store store.Store) *server {
 	httpClient := http.Client{
 		Timeout: ClientTimeOut,
 		Transport: &http.Transport{
@@ -50,6 +55,7 @@ func newServer(recognizer recognizer.Recognizer, objectStore objectstore.ObjectS
 		recognizer:  recognizer,
 		objectStore: objectStore,
 		client:      &httpClient,
+		store:       store,
 	}
 
 	s.configureRouter()
@@ -141,12 +147,31 @@ func (s *server) Recognize() handler.Handler {
 				return err
 			}
 
-			err := s.objectStore.Put(r.Context(), reader)
-			if err != nil {
-				logger.Errorf("failed to put: %v", err)
+			w := md5.New()
+
+			if _, err := io.Copy(w, reader); err != nil {
+				return err
 			}
 
-			// TODO: Save number and URL to store!
+			// Reset the read pointer.
+			_, err := reader.Seek(0, 0)
+			if err != nil {
+				return err
+			}
+
+			key := fmt.Sprintf("plates/%s.jpeg", hex.EncodeToString(w.Sum(nil)))
+			err = s.objectStore.Put(r.Context(), key, reader)
+			if err != nil {
+				logger.Errorf("failed to put: %v", err)
+			} else {
+				err = s.store.Recognition().Create(r.Context(), &store.Recognition{
+					ImageKey: key,
+					Plate:    res[0].Plate,
+				})
+				if err != nil {
+					logger.Errorf("failed to create: %v", err)
+				}
+			}
 		}
 
 		return json.NewEncoder(w).Encode(res)

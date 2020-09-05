@@ -6,6 +6,11 @@ jobs:
       - image: golang:1.15-buster
         environment:
           GO111MODULE: "on"
+      - image: circleci/postgres:12-alpine
+        environment:
+          POSTGRES_USER: "postgres"
+          POSTGRES_PASSWORD: "password"
+          POSTGRES_DB: "alpr"
     working_directory: /go/src/github.com/opencars/alpr
     steps:
       - checkout
@@ -23,6 +28,7 @@ jobs:
                 liblog4cplus-dev \
                 libopencv-dev \
                 libtesseract-dev \
+                netcat \
                 wget
 
       - run:
@@ -50,8 +56,27 @@ jobs:
             - "/go/pkg/mod"
 
       - run:
+          name: Waiting for Postgres to be ready
+          command: |
+            for i in `seq 1 10`;
+            do
+              nc -z localhost 5432 && echo Success && exit 0
+              echo -n .
+              sleep 1
+            done
+            echo Failed waiting for Postgres && exit 1
+
+      - run:
+          name: "Run migrations"
+          environment:
+            GO111MODULE: "off"
+          command: |
+            go get -tags 'postgres' -u github.com/golang-migrate/migrate/cmd/migrate
+            migrate -source file://migrations -database postgres://postgres:password@localhost:5432/alpr\?sslmode=disable up
+
+      - run:
           name: "Run Tests"
-          command: "go test -v ./..."
+          command: "go test -v -bench=. -race ./..."
 
       - run:
           name: "Lint Code"

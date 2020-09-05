@@ -10,8 +10,11 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/opencars/alpr/pkg/objectstore/mockobjstore"
 	"github.com/opencars/alpr/pkg/recognizer"
 	"github.com/opencars/alpr/pkg/recognizer/mockalpr"
+	"github.com/opencars/alpr/pkg/store"
+	"github.com/opencars/alpr/pkg/store/mockstore"
 )
 
 func TestServer_Recognize(t *testing.T) {
@@ -42,10 +45,24 @@ func TestServer_Recognize(t *testing.T) {
 		},
 	}
 
-	recognizer := mockalpr.NewMockRecognizer(ctrl)
-	recognizer.EXPECT().Recognize(gomock.Any()).Return(res, nil)
+	recognition := store.Recognition{
+		ImageKey: "plates/62ae874c38d8e208f953ef90965c11f6.jpeg",
+		Plate:    "AA9008MT",
+	}
 
-	srv := newServer(recognizer, nil)
+	mockALPR := mockalpr.NewMockRecognizer(ctrl)
+	mockALPR.EXPECT().Recognize(gomock.Any()).Return(res, nil)
+
+	mockObjStore := mockobjstore.NewMockObjectStore(ctrl)
+	mockObjStore.EXPECT().Put(gomock.Any(), recognition.ImageKey, gomock.Any()).Return(nil)
+
+	recRepo := mockstore.NewMockRecognitionRepository(ctrl)
+	recRepo.EXPECT().Create(gomock.Any(), &recognition).Return(nil)
+
+	mockStore := mockstore.NewMockStore(ctrl)
+	mockStore.EXPECT().Recognition().Return(recRepo)
+
+	srv := newServer(mockALPR, mockObjStore, mockStore)
 
 	s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "./test/example.jpeg")

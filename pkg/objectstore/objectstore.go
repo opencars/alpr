@@ -7,5 +7,5 @@ import (
 
 // ObjectStore is responsible for uploading objects.
 type ObjectStore interface {
-	Put(ctx context.Context, r *bytes.Reader) error
+	Put(ctx context.Context, key string, r *bytes.Reader) error
 }
