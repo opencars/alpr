@@ -21,7 +21,7 @@ func Start(ctx context.Context, addr string, conf *config.Server, rec recognizer
 
 	srv := http.Server{
 		Addr:           addr,
-		Handler:        handlers.CustomLoggingHandler(os.Stdout, s, logFormatter),
+		Handler:        handlers.CustomLoggingHandler(os.Stdout, handlers.ProxyHeaders(s), logFormatter),
 		ReadTimeout:    conf.ReadTimeout.Duration,
 		WriteTimeout:   conf.WriteTimeout.Duration,
 		IdleTimeout:    conf.IdleTimeout.Duration,
