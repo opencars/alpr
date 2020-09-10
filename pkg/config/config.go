@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"os"
 	"strconv"
 
@@ -14,6 +15,7 @@ type Config struct {
 	OpenALPR OpenALPR `yaml:"openalpr"`
 	S3       S3       `yaml:"s3"`
 	DB       Database `yaml:"database"`
+	EventAPI EventAPI `yaml:"event_api"`
 }
 
 // Server represents settings for creating http server.
@@ -61,6 +63,16 @@ type Database struct {
 // Address return API address in "host:port" format.
 func (db *Database) Address() string {
 	return db.Host + ":" + strconv.Itoa(db.Port)
+}
+
+type EventAPI struct {
+	Enabled bool   `yaml:"enabled"`
+	Host    string `yaml:"host"`
+	Port    int    `yaml:"port"`
+}
+
+func (api *EventAPI) Address() string {
+	return fmt.Sprintf("nats://%s:%d", api.Host, api.Port)
 }
 
 // New reads application configuration from specified file path.

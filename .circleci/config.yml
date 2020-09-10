@@ -83,8 +83,8 @@ jobs:
           environment:
             GO111MODULE: "on"
           command: |
-            go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.26.0
-            golangci-lint run
+            go get -u github.com/mgechev/revive
+            revive -formatter stylish -config=revive.toml ./...
 
       - run:
           name: Build Project Binary

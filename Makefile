@@ -1,5 +1,5 @@
 .PHONY: default build clean
-APPS        := server
+APPS        := server worker
 BLDDIR      ?= bin
 VERSION     ?= $(shell cat VERSION)
 IMPORT_BASE := github.com/opencars/alpr
@@ -15,7 +15,7 @@ $(BLDDIR)/%:
 $(APPS): %: $(BLDDIR)/%
 
 lint:
-	@revive -formatter stylish -config=revive.yaml ./...
+	@revive -formatter stylish -config=revive.toml ./...
 
 clean:
 	@mkdir -p $(BLDDIR)
