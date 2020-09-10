@@ -6,11 +6,9 @@ package mockstore
 
 import (
 	context "context"
-	reflect "reflect"
-
 	gomock "github.com/golang/mock/gomock"
-
 	store "github.com/opencars/alpr/pkg/store"
+	reflect "reflect"
 )
 
 // MockStore is a mock of Store interface

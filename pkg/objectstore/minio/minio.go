@@ -9,7 +9,7 @@ import (
 	"github.com/opencars/alpr/pkg/config"
 )
 
-// ObjectStore is respnosible for uploading objects.
+// ObjectStore is responsible for uploading objects.
 type ObjectStore struct {
 	client *minio.Client
 	bucket string

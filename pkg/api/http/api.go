@@ -6,18 +6,18 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/opencars/alpr/pkg/queue"
+
 	"github.com/gorilla/handlers"
 
 	"github.com/opencars/alpr/pkg/config"
 	"github.com/opencars/alpr/pkg/logger"
-	"github.com/opencars/alpr/pkg/objectstore"
 	"github.com/opencars/alpr/pkg/recognizer"
-	"github.com/opencars/alpr/pkg/store"
 )
 
 // Start starts the server with specified store.
-func Start(ctx context.Context, addr string, conf *config.Server, rec recognizer.Recognizer, objStore objectstore.ObjectStore, store store.Store) error {
-	s := newServer(rec, objStore, store)
+func Start(ctx context.Context, addr string, conf *config.Server, rec recognizer.Recognizer, pub queue.Publisher) error {
+	s := newServer(rec, pub)
 
 	srv := http.Server{
 		Addr:           addr,

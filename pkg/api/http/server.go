@@ -2,10 +2,7 @@ package http
 
 import (
 	"bytes"
-	"crypto/md5"
-	"encoding/hex"
 	"encoding/json"
-	"fmt"
 	"io"
 	"net"
 	"net/http"
@@ -19,6 +16,7 @@ import (
 	"github.com/opencars/alpr/pkg/handler"
 	"github.com/opencars/alpr/pkg/logger"
 	"github.com/opencars/alpr/pkg/objectstore"
+	"github.com/opencars/alpr/pkg/queue"
 	"github.com/opencars/alpr/pkg/recognizer"
 	"github.com/opencars/alpr/pkg/store"
 	"github.com/opencars/alpr/pkg/version"
@@ -33,14 +31,15 @@ const (
 )
 
 type server struct {
-	router      *mux.Router
-	client      *http.Client
-	recognizer  recognizer.Recognizer
-	objectStore objectstore.ObjectStore
-	store       store.Store
+	router     *mux.Router
+	client     *http.Client
+	recognizer recognizer.Recognizer
+	obj        objectstore.ObjectStore
+	store      store.Store
+	pub        queue.Publisher
 }
 
-func newServer(recognizer recognizer.Recognizer, objectStore objectstore.ObjectStore, store store.Store) *server {
+func newServer(rec recognizer.Recognizer, pub queue.Publisher) *server {
 	httpClient := http.Client{
 		Timeout: ClientTimeOut,
 		Transport: &http.Transport{
@@ -51,11 +50,10 @@ func newServer(recognizer recognizer.Recognizer, objectStore objectstore.ObjectS
 	}
 
 	s := server{
-		router:      mux.NewRouter(),
-		recognizer:  recognizer,
-		objectStore: objectStore,
-		client:      &httpClient,
-		store:       store,
+		router:     mux.NewRouter(),
+		recognizer: rec,
+		client:     &httpClient,
+		pub:        pub,
 	}
 
 	s.configureRouter()
@@ -140,37 +138,14 @@ func (s *server) Recognize() handler.Handler {
 			return err
 		}
 
-		if len(res) > 0 && s.objectStore != nil {
-			// Reset the read pointer.
-			_, err = reader.Seek(0, 0)
+		if len(res) > 0 {
+			err := s.pub.Publish(&queue.Event{
+				URL:    imageURL,
+				Number: res[0].Plate,
+			})
+
 			if err != nil {
-				return err
-			}
-
-			w := md5.New()
-
-			if _, err := io.Copy(w, reader); err != nil {
-				return err
-			}
-
-			// Reset the read pointer.
-			_, err := reader.Seek(0, 0)
-			if err != nil {
-				return err
-			}
-
-			key := fmt.Sprintf("plates/%s.jpeg", hex.EncodeToString(w.Sum(nil)))
-			err = s.objectStore.Put(r.Context(), key, reader)
-			if err != nil {
-				logger.Errorf("failed to put: %v", err)
-			} else {
-				err = s.store.Recognition().Create(r.Context(), &store.Recognition{
-					ImageKey: key,
-					Plate:    res[0].Plate,
-				})
-				if err != nil {
-					logger.Errorf("failed to create: %v", err)
-				}
+				logger.Errorf("publish: %v", err)
 			}
 		}
 

@@ -26,3 +26,6 @@ RUN cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_INSTALL_SYSCONFDIR:PATH=/etc 
     make install
 
 ENV GO111MODULE=on
+
+RUN mkdir -p /usr/local/share/openalpr/
+RUN cp -R /usr/share/openalpr/runtime_data /usr/local/share/openalpr/runtime_data
