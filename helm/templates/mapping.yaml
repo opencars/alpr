@@ -1,0 +1,8 @@
+apiVersion: getambassador.io/v3alpha1
+kind:  Mapping
+metadata:
+  name: {{ include "opencars-alpr.fullname" . }}
+spec:
+  host: alpr.opencars.app
+  prefix: /api/v1/alpr
+  service: http://{{ include "opencars-alpr.fullname" . }}.{{ .Release.Namespace }}:{{ .Values.service.port }}

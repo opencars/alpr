@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: opencars-alpr-config
+data:
+  config.yaml: |
+    log:
+      level: "debug"
+    server:
+      shutdown_timeout: "15s"
+      read_timeout: "10s"
+      write_timeout: "10s"
+      idle_timeout: "10s"
+    openalpr:
+      pool: 25
+      max_number: 100
+      country: "ua"
+      config_file: "/usr/local/share/openalpr/config/openalpr.defaults.conf"
+      runtime_dir: "/usr/local/share/openalpr/runtime_data"
+    s3:
+      endpoint: "ams3.digitaloceanspaces.com"
+      access_key_id: "2CRFRYCMP52UBZKKMRDT"
+      secret_access_key: "psIHKqifD5nwC6JgnlxebU8L1JSkwexTirwT8ip9vBI"
+      ssl: true
+      bucket: "open-cars"
+    database:
+      host: 164.90.242.241
+      port: 5432
+      username: postgres
+      password: NvBD8kieBorVaWUh
+      database: alpr
+      ssl_mode: require
+    event_api:
+      enabled: false
+      host: "nats.prod.svc.cluster.local"
+      port: 4222
