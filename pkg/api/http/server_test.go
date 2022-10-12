@@ -2,11 +2,12 @@ package http
 
 import (
 	"fmt"
-	"github.com/opencars/alpr/pkg/queue"
-	"github.com/opencars/alpr/pkg/queue/mockqueue"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/opencars/alpr/pkg/queue"
+	"github.com/opencars/alpr/pkg/queue/mockqueue"
 
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"

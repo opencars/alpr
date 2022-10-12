@@ -7,8 +7,9 @@ package mockobjstore
 import (
 	bytes "bytes"
 	context "context"
-	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
+
+	gomock "github.com/golang/mock/gomock"
 )
 
 // MockObjectStore is a mock of ObjectStore interface

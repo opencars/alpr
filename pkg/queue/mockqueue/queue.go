@@ -6,9 +6,10 @@ package mockqueue
 
 import (
 	context "context"
+	reflect "reflect"
+
 	gomock "github.com/golang/mock/gomock"
 	queue "github.com/opencars/alpr/pkg/queue"
-	reflect "reflect"
 )
 
 // MockPublisher is a mock of Publisher interface

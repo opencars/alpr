@@ -5,10 +5,11 @@
 package mockalpr
 
 import (
-	gomock "github.com/golang/mock/gomock"
-	recognizer "github.com/opencars/alpr/pkg/recognizer"
 	io "io"
 	reflect "reflect"
+
+	gomock "github.com/golang/mock/gomock"
+	recognizer "github.com/opencars/alpr/pkg/recognizer"
 )
 
 // MockRecognizer is a mock of Recognizer interface
