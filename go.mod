@@ -13,7 +13,7 @@ require (
 	github.com/openalpr/openalpr v2.3.0+incompatible
 	github.com/rs/zerolog v1.28.0
 	github.com/satori/go.uuid v1.2.0
-	github.com/stretchr/testify v1.6.1
+	github.com/stretchr/testify v1.7.1
 	gopkg.in/yaml.v2 v2.4.0
 )
 

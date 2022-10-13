@@ -1,5 +1,5 @@
 FROM quay.io/opencars/openalpr:alpine AS openalpr
-FROM golang:1.19-alpine AS build
+FROM golang:1.18-alpine3.15 AS build
 
 RUN apk update && apk upgrade && apk add --no-cache ca-certificates tesseract-ocr-dev tiff-dev zlib-dev libpng-dev jpeg-dev make gcc build-base
 
@@ -21,7 +21,7 @@ COPY . .
 
 RUN BLDDIR=/go/bin make build
 
-FROM alpine:3.12
+FROM alpine:3.15
 
 ENV LD_LIBRARY_PATH="/usr/local/lib"
 ENV PKG_CONFIG_PATH="/usr/local/share/pkgconfig:/usr/local/lib/pkgconfig:/usr/local/lib64/pkgconfig"
