@@ -6,9 +6,9 @@ import (
 	"io/ioutil"
 
 	"github.com/openalpr/openalpr/src/bindings/go/openalpr"
+	"github.com/opencars/seedwork/logger"
 
 	"github.com/opencars/alpr/pkg/config"
-	"github.com/opencars/alpr/pkg/logger"
 	"github.com/opencars/alpr/pkg/recognizer"
 )
 

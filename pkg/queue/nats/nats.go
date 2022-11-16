@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 
 	"github.com/nats-io/nats.go"
+	"github.com/opencars/seedwork/logger"
 
-	"github.com/opencars/alpr/pkg/logger"
 	"github.com/opencars/alpr/pkg/queue"
 )
 

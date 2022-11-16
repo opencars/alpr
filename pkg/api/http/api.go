@@ -6,12 +6,11 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/opencars/alpr/pkg/queue"
-
 	"github.com/gorilla/handlers"
+	"github.com/opencars/seedwork/logger"
 
 	"github.com/opencars/alpr/pkg/config"
-	"github.com/opencars/alpr/pkg/logger"
+	"github.com/opencars/alpr/pkg/queue"
 	"github.com/opencars/alpr/pkg/recognizer"
 )
 

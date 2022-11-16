@@ -12,9 +12,9 @@ import (
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"github.com/opencars/seedwork/logger"
 
 	"github.com/opencars/alpr/pkg/handler"
-	"github.com/opencars/alpr/pkg/logger"
 	"github.com/opencars/alpr/pkg/objectstore"
 	"github.com/opencars/alpr/pkg/queue"
 	"github.com/opencars/alpr/pkg/recognizer"

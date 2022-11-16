@@ -15,13 +15,13 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/opencars/alpr/pkg/queue/nats"
+	"github.com/opencars/seedwork/logger"
 
 	"github.com/opencars/alpr/pkg/config"
-	"github.com/opencars/alpr/pkg/logger"
 	"github.com/opencars/alpr/pkg/objectstore"
 	"github.com/opencars/alpr/pkg/objectstore/minio"
 	"github.com/opencars/alpr/pkg/queue"
+	"github.com/opencars/alpr/pkg/queue/nats"
 	"github.com/opencars/alpr/pkg/store"
 	"github.com/opencars/alpr/pkg/store/sqlstore"
 )

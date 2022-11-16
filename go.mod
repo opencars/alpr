@@ -9,17 +9,16 @@ require (
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/lib/pq v1.10.7
 	github.com/minio/minio-go v6.0.14+incompatible
-	github.com/nats-io/nats.go v1.17.0
+	github.com/nats-io/nats.go v1.20.0
 	github.com/openalpr/openalpr v2.3.0+incompatible
-	github.com/rs/zerolog v1.28.0
 	github.com/satori/go.uuid v1.2.0
-	github.com/stretchr/testify v1.7.1
+	github.com/stretchr/testify v1.8.1
 	gopkg.in/yaml.v2 v2.4.0
 )
 
 require (
-	github.com/davecgh/go-spew v1.1.0 // indirect
-	github.com/felixge/httpsnoop v1.0.1 // indirect
+	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/felixge/httpsnoop v1.0.3 // indirect
 	github.com/go-ini/ini v1.67.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
@@ -28,11 +27,13 @@ require (
 	github.com/nats-io/nats-server/v2 v2.9.3 // indirect
 	github.com/nats-io/nkeys v0.3.0 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect
+	github.com/opencars/seedwork v0.0.2
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	golang.org/x/crypto v0.0.0-20220926161630-eccd6366d1be // indirect
-	golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2 // indirect
-	golang.org/x/sys v0.0.0-20220928140112-f11e5e49a4ec // indirect
-	golang.org/x/text v0.3.6 // indirect
+	github.com/rs/zerolog v1.28.0 // indirect
+	golang.org/x/crypto v0.3.0 // indirect
+	golang.org/x/net v0.2.0 // indirect
+	golang.org/x/sys v0.2.0 // indirect
+	golang.org/x/text v0.4.0 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
-	gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
