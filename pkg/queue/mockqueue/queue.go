@@ -12,30 +12,30 @@ import (
 	queue "github.com/opencars/alpr/pkg/queue"
 )
 
-// MockPublisher is a mock of Publisher interface
+// MockPublisher is a mock of Publisher interface.
 type MockPublisher struct {
 	ctrl     *gomock.Controller
 	recorder *MockPublisherMockRecorder
 }
 
-// MockPublisherMockRecorder is the mock recorder for MockPublisher
+// MockPublisherMockRecorder is the mock recorder for MockPublisher.
 type MockPublisherMockRecorder struct {
 	mock *MockPublisher
 }
 
-// NewMockPublisher creates a new mock instance
+// NewMockPublisher creates a new mock instance.
 func NewMockPublisher(ctrl *gomock.Controller) *MockPublisher {
 	mock := &MockPublisher{ctrl: ctrl}
 	mock.recorder = &MockPublisherMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockPublisher) EXPECT() *MockPublisherMockRecorder {
 	return m.recorder
 }
 
-// Publish mocks base method
+// Publish mocks base method.
 func (m *MockPublisher) Publish(arg0 *queue.Event) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Publish", arg0)
@@ -43,36 +43,36 @@ func (m *MockPublisher) Publish(arg0 *queue.Event) error {
 	return ret0
 }
 
-// Publish indicates an expected call of Publish
+// Publish indicates an expected call of Publish.
 func (mr *MockPublisherMockRecorder) Publish(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Publish", reflect.TypeOf((*MockPublisher)(nil).Publish), arg0)
 }
 
-// MockSubscriber is a mock of Subscriber interface
+// MockSubscriber is a mock of Subscriber interface.
 type MockSubscriber struct {
 	ctrl     *gomock.Controller
 	recorder *MockSubscriberMockRecorder
 }
 
-// MockSubscriberMockRecorder is the mock recorder for MockSubscriber
+// MockSubscriberMockRecorder is the mock recorder for MockSubscriber.
 type MockSubscriberMockRecorder struct {
 	mock *MockSubscriber
 }
 
-// NewMockSubscriber creates a new mock instance
+// NewMockSubscriber creates a new mock instance.
 func NewMockSubscriber(ctrl *gomock.Controller) *MockSubscriber {
 	mock := &MockSubscriber{ctrl: ctrl}
 	mock.recorder = &MockSubscriberMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockSubscriber) EXPECT() *MockSubscriberMockRecorder {
 	return m.recorder
 }
 
-// Subscribe mocks base method
+// Subscribe mocks base method.
 func (m *MockSubscriber) Subscribe(arg0 context.Context) (<-chan *queue.Event, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Subscribe", arg0)
@@ -81,7 +81,7 @@ func (m *MockSubscriber) Subscribe(arg0 context.Context) (<-chan *queue.Event, e
 	return ret0, ret1
 }
 
-// Subscribe indicates an expected call of Subscribe
+// Subscribe indicates an expected call of Subscribe.
 func (mr *MockSubscriberMockRecorder) Subscribe(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Subscribe", reflect.TypeOf((*MockSubscriber)(nil).Subscribe), arg0)

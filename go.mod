@@ -11,10 +11,13 @@ require (
 	github.com/minio/minio-go v6.0.14+incompatible
 	github.com/nats-io/nats.go v1.20.0
 	github.com/openalpr/openalpr v2.3.0+incompatible
+	github.com/opencars/httputil v0.0.2
 	github.com/satori/go.uuid v1.2.0
 	github.com/stretchr/testify v1.8.1
 	gopkg.in/yaml.v2 v2.4.0
 )
+
+require github.com/go-ozzo/ozzo-validation/v4 v4.3.0 // indirect
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect

@@ -12,30 +12,30 @@ import (
 	gomock "github.com/golang/mock/gomock"
 )
 
-// MockObjectStore is a mock of ObjectStore interface
+// MockObjectStore is a mock of ObjectStore interface.
 type MockObjectStore struct {
 	ctrl     *gomock.Controller
 	recorder *MockObjectStoreMockRecorder
 }
 
-// MockObjectStoreMockRecorder is the mock recorder for MockObjectStore
+// MockObjectStoreMockRecorder is the mock recorder for MockObjectStore.
 type MockObjectStoreMockRecorder struct {
 	mock *MockObjectStore
 }
 
-// NewMockObjectStore creates a new mock instance
+// NewMockObjectStore creates a new mock instance.
 func NewMockObjectStore(ctrl *gomock.Controller) *MockObjectStore {
 	mock := &MockObjectStore{ctrl: ctrl}
 	mock.recorder = &MockObjectStoreMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockObjectStore) EXPECT() *MockObjectStoreMockRecorder {
 	return m.recorder
 }
 
-// Put mocks base method
+// Put mocks base method.
 func (m *MockObjectStore) Put(arg0 context.Context, arg1 string, arg2 *bytes.Reader) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Put", arg0, arg1, arg2)
@@ -43,7 +43,7 @@ func (m *MockObjectStore) Put(arg0 context.Context, arg1 string, arg2 *bytes.Rea
 	return ret0
 }
 
-// Put indicates an expected call of Put
+// Put indicates an expected call of Put.
 func (mr *MockObjectStoreMockRecorder) Put(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Put", reflect.TypeOf((*MockObjectStore)(nil).Put), arg0, arg1, arg2)

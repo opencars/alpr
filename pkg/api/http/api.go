@@ -10,17 +10,17 @@ import (
 	"github.com/opencars/seedwork/logger"
 
 	"github.com/opencars/alpr/pkg/config"
+	"github.com/opencars/alpr/pkg/domain"
 	"github.com/opencars/alpr/pkg/queue"
-	"github.com/opencars/alpr/pkg/recognizer"
 )
 
 // Start starts the server with specified store.
-func Start(ctx context.Context, addr string, conf *config.Server, rec recognizer.Recognizer, pub queue.Publisher) error {
+func Start(ctx context.Context, addr string, conf *config.Server, rec domain.Recognizer, pub queue.Publisher) error {
 	s := newServer(rec, pub)
 
 	srv := http.Server{
 		Addr:           addr,
-		Handler:        handlers.CustomLoggingHandler(os.Stdout, handlers.ProxyHeaders(s), logFormatter),
+		Handler:        handlers.CustomLoggingHandler(os.Stdout, handlers.ProxyHeaders(s.router), logFormatter),
 		ReadTimeout:    conf.ReadTimeout.Duration,
 		WriteTimeout:   conf.WriteTimeout.Duration,
 		IdleTimeout:    conf.IdleTimeout.Duration,

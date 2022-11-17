@@ -1,4 +1,4 @@
-package recognizer
+package model
 
 // Coordinate represents
 type Coordinate struct {
