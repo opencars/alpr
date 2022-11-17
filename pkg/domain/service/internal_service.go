@@ -11,14 +11,14 @@ import (
 )
 
 type InternalService struct {
-	repo domain.RecognitionRepository
-	obj  domain.ObjectStore
+	repo    domain.RecognitionRepository
+	baseURL string
 }
 
-func NewInternalService(repo domain.RecognitionRepository, obj domain.ObjectStore) *InternalService {
+func NewInternalService(repo domain.RecognitionRepository, baseURL string) *InternalService {
 	return &InternalService{
-		repo: repo,
-		obj:  obj,
+		repo:    repo,
+		baseURL: baseURL,
 	}
 }
 
@@ -30,6 +30,10 @@ func (s *InternalService) ListRecognitions(ctx context.Context, q *query.List) (
 	results, err := s.repo.FindByPlate(ctx, q.Number)
 	if err != nil {
 		return nil, err
+	}
+
+	for _, r := range results {
+		r.ImageKey = s.baseURL + "/" + r.ImageKey
 	}
 
 	return results, nil

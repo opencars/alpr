@@ -48,6 +48,7 @@ type S3 struct {
 	SecretAccessKey string `yaml:"secret_access_key"`
 	SSL             bool   `yaml:"ssl"`
 	Bucket          string `yaml:"bucket"`
+	URL             string `yaml:"base_url"`
 }
 
 // Database contains configuration details for database.

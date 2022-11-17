@@ -33,7 +33,7 @@ func main() {
 		logger.Fatalf("store: %v", err)
 	}
 
-	r := service.NewInternalService(s.Recognition(), nil)
+	r := service.NewInternalService(s.Recognition(), conf.S3.URL)
 
 	addr := ":" + strconv.Itoa(*port)
 	api := grpc.New(addr, r)

@@ -1,6 +1,6 @@
 log:
   level: "debug"
-  mode:  "dev"
+  mode: "dev"
 
 openalpr:
   pool: 10
@@ -21,6 +21,7 @@ s3:
   secret_access_key: "minio"
   ssl: true
   bucket: "open-cars"
+  base_url: "https://cdn.opencars.app"
 
 database:
   host: "127.0.0.1"
