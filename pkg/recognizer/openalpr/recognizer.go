@@ -6,10 +6,10 @@ import (
 	"io/ioutil"
 
 	"github.com/openalpr/openalpr/src/bindings/go/openalpr"
-	"github.com/opencars/alpr/pkg/domain/model"
 	"github.com/opencars/seedwork/logger"
 
 	"github.com/opencars/alpr/pkg/config"
+	"github.com/opencars/alpr/pkg/domain/model"
 )
 
 // Recognizer is a pool of OpenALPR instances for recognizing the car plates.

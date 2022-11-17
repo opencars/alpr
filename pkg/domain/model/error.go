@@ -5,8 +5,6 @@ import (
 )
 
 var (
-	ErrRequiredImageURL   = seedwork.NewError("")
-	ErrInvalidImageURL    = seedwork.NewError("")
-	ErrUnknownContentType = seedwork.NewError("")
-	ErrImageTooLarge      = seedwork.NewError("")
+	ErrUnknownContentType = seedwork.NewError("request.url.content_type_invalid")
+	ErrImageTooLarge      = seedwork.NewError("request.url.image_too_large")
 )

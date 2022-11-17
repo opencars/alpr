@@ -17,7 +17,10 @@ require (
 	gopkg.in/yaml.v2 v2.4.0
 )
 
-require github.com/go-ozzo/ozzo-validation/v4 v4.3.0 // indirect
+require (
+	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d // indirect
+	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
+)
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect

@@ -11,6 +11,7 @@ import (
 
 	"github.com/opencars/alpr/pkg/api/http"
 	"github.com/opencars/alpr/pkg/config"
+	"github.com/opencars/alpr/pkg/domain/service"
 	"github.com/opencars/alpr/pkg/queue/nats"
 	"github.com/opencars/alpr/pkg/recognizer/openalpr"
 )
@@ -50,9 +51,11 @@ func main() {
 		cancel()
 	}()
 
+	svc := service.NewCustomerService(recognizer, pub)
+
 	addr := ":8080"
 	logger.Infof("Listening on %s...", addr)
-	if err := http.Start(ctx, addr, &conf.Server, recognizer, pub); err != nil {
+	if err := http.Start(ctx, addr, &conf.Server, svc); err != nil {
 		logger.Fatalf("http server failed: %v", err)
 	}
 }

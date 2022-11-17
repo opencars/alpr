@@ -11,12 +11,11 @@ import (
 
 	"github.com/opencars/alpr/pkg/config"
 	"github.com/opencars/alpr/pkg/domain"
-	"github.com/opencars/alpr/pkg/queue"
 )
 
 // Start starts the server with specified store.
-func Start(ctx context.Context, addr string, conf *config.Server, rec domain.Recognizer, pub queue.Publisher) error {
-	s := newServer(rec, pub)
+func Start(ctx context.Context, addr string, conf *config.Server, svc domain.CustomerService) error {
+	s := newServer(svc)
 
 	srv := http.Server{
 		Addr:           addr,

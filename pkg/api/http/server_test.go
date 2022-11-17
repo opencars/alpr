@@ -6,7 +6,6 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/opencars/alpr/pkg/queue"
 	"github.com/opencars/alpr/pkg/queue/mockqueue"
 
 	"github.com/golang/mock/gomock"

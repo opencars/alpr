@@ -7,7 +7,7 @@ import (
 	"github.com/nats-io/nats.go"
 	"github.com/opencars/seedwork/logger"
 
-	"github.com/opencars/alpr/pkg/queue"
+	"github.com/opencars/alpr/pkg/domain/model"
 )
 
 const (
@@ -33,7 +33,7 @@ func New(url string, enabled bool) (*Queue, error) {
 	}, nil
 }
 
-func (p *Queue) Publish(event *queue.Event) error {
+func (p *Queue) Publish(event *model.Event) error {
 	if p.conn == nil {
 		return nil
 	}
@@ -46,20 +46,20 @@ func (p *Queue) Publish(event *queue.Event) error {
 	return p.conn.Publish(topic, data)
 }
 
-func (p *Queue) Subscribe(ctx context.Context) (<-chan *queue.Event, error) {
+func (p *Queue) Subscribe(ctx context.Context) (<-chan *model.Event, error) {
 	messages := make(chan *nats.Msg, 64)
 	_, err := p.conn.ChanSubscribe(topic, messages)
 	if err != nil {
 		return nil, err
 	}
 
-	events := make(chan *queue.Event)
+	events := make(chan *model.Event)
 	go msgToEvent(ctx, messages, events)
 
 	return events, nil
 }
 
-func msgToEvent(ctx context.Context, in <-chan *nats.Msg, out chan<- *queue.Event) {
+func msgToEvent(ctx context.Context, in <-chan *nats.Msg, out chan<- *model.Event) {
 	iter := func() (bool, error) {
 		select {
 		case msg, ok := <-in:
@@ -67,7 +67,7 @@ func msgToEvent(ctx context.Context, in <-chan *nats.Msg, out chan<- *queue.Even
 				return false, nil
 			}
 
-			var event queue.Event
+			var event model.Event
 
 			err := json.Unmarshal(msg.Data, &event)
 			if err != nil {

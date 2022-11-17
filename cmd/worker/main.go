@@ -13,31 +13,21 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
 	"github.com/opencars/seedwork/logger"
 
 	"github.com/opencars/alpr/pkg/config"
+	"github.com/opencars/alpr/pkg/domain"
 	"github.com/opencars/alpr/pkg/domain/model"
-	"github.com/opencars/alpr/pkg/objectstore"
 	"github.com/opencars/alpr/pkg/objectstore/minio"
-	"github.com/opencars/alpr/pkg/queue"
 	"github.com/opencars/alpr/pkg/queue/nats"
 	"github.com/opencars/alpr/pkg/store"
 	"github.com/opencars/alpr/pkg/store/sqlstore"
 )
 
-const (
-	// MaxImageSize equals to 5 MB.
-	MaxImageSize = 5 << 20
-
-	// ClientTimeOut equals to 10 seconds.
-	ClientTimeOut = 10 * time.Second
-)
-
 type worker struct {
-	sub queue.Subscriber
-	obj objectstore.ObjectStore
+	sub domain.Subscriber
+	obj domain.ObjectStore
 	db  store.Store
 
 	http *http.Client
@@ -65,7 +55,7 @@ func (w *worker) process(ctx context.Context) error {
 			return true, err
 		}
 
-		bodyWithLimit := io.LimitReader(resp.Body, MaxImageSize+1)
+		bodyWithLimit := io.LimitReader(resp.Body, model.MaxImageSize+1)
 
 		var buff bytes.Buffer
 		if _, err = io.CopyN(&buff, bodyWithLimit, bytes.MinRead); err != nil {
@@ -82,7 +72,7 @@ func (w *worker) process(ctx context.Context) error {
 			return true, err
 		}
 
-		if buff.Len() > MaxImageSize {
+		if buff.Len() > model.MaxImageSize {
 			return true, fmt.Errorf("image is too big")
 		}
 
@@ -121,16 +111,16 @@ func (w *worker) process(ctx context.Context) error {
 	}
 }
 
-func newWorker(sub queue.Subscriber, obj objectstore.ObjectStore, db store.Store) *worker {
+func newWorker(sub domain.Subscriber, obj domain.ObjectStore, db store.Store) *worker {
 	return &worker{
 		sub: sub,
 		obj: obj,
 		db:  db,
 		http: &http.Client{
-			Timeout: ClientTimeOut,
+			Timeout: model.ClientTimeOut,
 			Transport: &http.Transport{
 				DialContext: (&net.Dialer{
-					Timeout: ClientTimeOut,
+					Timeout: model.ClientTimeOut,
 				}).DialContext,
 			},
 		},

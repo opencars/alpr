@@ -2,17 +2,16 @@ package service
 
 import (
 	"context"
-	"net/http"
 
 	"github.com/opencars/alpr/pkg/domain/model"
 )
 
 type InternalService struct {
-	client     *http.Client
-	recognizer recognizer.Recognizer
-	obj        objectstore.ObjectStore
-	store      store.Store
-	pub        queue.Publisher
+	// client     *http.Client
+	// recognizer domain.Recognizer
+	// obj        domain.ObjectStore
+	// store      domain.Store/
+	// pub        domain.Publisher
 }
 
 func NewInternalService() *InternalService {
