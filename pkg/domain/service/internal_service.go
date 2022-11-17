@@ -32,8 +32,8 @@ func (s *InternalService) ListRecognitions(ctx context.Context, q *query.List) (
 		return nil, err
 	}
 
-	for _, r := range results {
-		r.ImageKey = s.baseURL + "/" + r.ImageKey
+	for i := range results {
+		results[i].ImageKey = s.baseURL + "/" + results[i].ImageKey
 	}
 
 	return results, nil

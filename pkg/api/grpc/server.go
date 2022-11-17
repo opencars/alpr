@@ -23,7 +23,6 @@ func (h *alprHandler) FindByNumber(ctx context.Context, r *alpr.NumberRequest) (
 	}
 
 	dtos := make([]*alpr.Recognition, 0, len(result))
-
 	for i := range result {
 		dtos = append(dtos, convert(&result[i]))
 	}
