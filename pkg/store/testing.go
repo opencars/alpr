@@ -5,12 +5,14 @@ import (
 	"time"
 
 	uuid "github.com/satori/go.uuid"
+
+	"github.com/opencars/alpr/pkg/domain/model"
 )
 
-func TestRecognition(t *testing.T) *Recognition {
+func TestRecognition(t *testing.T) *model.Recognition {
 	t.Helper()
 
-	return &Recognition{
+	return &model.Recognition{
 		ID:        uuid.NewV4().String(),
 		ImageKey:  "plates/example.jpeg",
 		Plate:     "AA1111AA",

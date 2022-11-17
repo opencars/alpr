@@ -18,6 +18,7 @@ import (
 	"github.com/opencars/seedwork/logger"
 
 	"github.com/opencars/alpr/pkg/config"
+	"github.com/opencars/alpr/pkg/domain/model"
 	"github.com/opencars/alpr/pkg/objectstore"
 	"github.com/opencars/alpr/pkg/objectstore/minio"
 	"github.com/opencars/alpr/pkg/queue"
@@ -101,7 +102,7 @@ func (w *worker) process(ctx context.Context) error {
 
 		err = w.obj.Put(ctx, key, reader)
 		if err == nil {
-			err = w.db.Recognition().Create(ctx, &store.Recognition{
+			err = w.db.Recognition().Create(ctx, &model.Recognition{
 				ImageKey: key,
 				Plate:    event.Number,
 			})

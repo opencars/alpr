@@ -3,7 +3,7 @@ package sqlstore
 import (
 	"context"
 
-	"github.com/opencars/alpr/pkg/store"
+	"github.com/opencars/alpr/pkg/domain/model"
 )
 
 // RecognitionRepository is responsible for recognitions manipulation.
@@ -12,7 +12,7 @@ type RecognitionRepository struct {
 }
 
 // Create adds new record to the database.
-func (r *RecognitionRepository) Create(ctx context.Context, recognition *store.Recognition) error {
+func (r *RecognitionRepository) Create(ctx context.Context, recognition *model.Recognition) error {
 	var id string
 	err := r.store.db.GetContext(ctx, &id,
 		`INSERT INTO recognitions (
@@ -33,8 +33,8 @@ func (r *RecognitionRepository) Create(ctx context.Context, recognition *store.R
 }
 
 // FindByPlate returns list of records with specified plate.
-func (r *RecognitionRepository) FindByPlate(ctx context.Context, plate string) ([]store.Recognition, error) {
-	recognitions := make([]store.Recognition, 0)
+func (r *RecognitionRepository) FindByPlate(ctx context.Context, plate string) ([]model.Recognition, error) {
+	recognitions := make([]model.Recognition, 0)
 
 	err := r.store.db.SelectContext(ctx, &recognitions,
 		`SELECT id, image_key, plate, created_at

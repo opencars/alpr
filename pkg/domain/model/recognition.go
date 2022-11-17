@@ -1,10 +1,9 @@
-package store
+package model
 
 import (
 	"time"
 )
 
-// Recognition ...
 type Recognition struct {
 	ID        string    `db:"id"`
 	ImageKey  string    `db:"image_key"`
