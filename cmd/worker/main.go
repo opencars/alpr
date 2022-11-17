@@ -21,14 +21,13 @@ import (
 	"github.com/opencars/alpr/pkg/domain/model"
 	"github.com/opencars/alpr/pkg/objectstore/minio"
 	"github.com/opencars/alpr/pkg/queue/nats"
-	"github.com/opencars/alpr/pkg/store"
 	"github.com/opencars/alpr/pkg/store/sqlstore"
 )
 
 type worker struct {
 	sub domain.Subscriber
 	obj domain.ObjectStore
-	db  store.Store
+	db  domain.Store
 
 	http *http.Client
 }
@@ -111,7 +110,7 @@ func (w *worker) process(ctx context.Context) error {
 	}
 }
 
-func newWorker(sub domain.Subscriber, obj domain.ObjectStore, db store.Store) *worker {
+func newWorker(sub domain.Subscriber, obj domain.ObjectStore, db domain.Store) *worker {
 	return &worker{
 		sub: sub,
 		obj: obj,

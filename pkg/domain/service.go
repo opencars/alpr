@@ -9,6 +9,15 @@ import (
 	"github.com/opencars/alpr/pkg/domain/model"
 )
 
+type Store interface {
+	Recognition() RecognitionRepository
+}
+
+type RecognitionRepository interface {
+	Create(ctx context.Context, recognition *model.Recognition) error
+	FindByPlate(ctx context.Context, plate string) ([]model.Recognition, error)
+}
+
 type InternalService interface {
 	ListRecognitions(ctx context.Context, number string) ([]model.Recognition, error)
 }

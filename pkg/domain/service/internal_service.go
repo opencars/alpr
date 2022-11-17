@@ -3,21 +3,23 @@ package service
 import (
 	"context"
 
+	"github.com/opencars/alpr/pkg/domain"
 	"github.com/opencars/alpr/pkg/domain/model"
 )
 
 type InternalService struct {
-	// client     *http.Client
-	// recognizer domain.Recognizer
-	// obj        domain.ObjectStore
-	// store      domain.Store/
-	// pub        domain.Publisher
+	recognizer domain.Recognizer
+	obj        domain.ObjectStore
 }
 
-func NewInternalService() *InternalService {
-	return &InternalService{}
+func NewInternalService(rec domain.Recognizer, obj domain.ObjectStore) *InternalService {
+	return &InternalService{
+		recognizer: rec,
+		obj:        obj,
+	}
 }
 
 func (svc *InternalService) ListRecognitions(ctx context.Context, number string) ([]model.Recognition, error) {
+
 	return nil, nil
 }

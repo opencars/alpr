@@ -7,7 +7,7 @@ import (
 	_ "github.com/lib/pq"
 
 	"github.com/opencars/alpr/pkg/config"
-	"github.com/opencars/alpr/pkg/store"
+	"github.com/opencars/alpr/pkg/domain"
 )
 
 // Store is postgres wrapper for store.Store.
@@ -18,7 +18,7 @@ type Store struct {
 }
 
 // Recognition is responsible for recognitions manipulation.
-func (s *Store) Recognition() store.RecognitionRepository {
+func (s *Store) Recognition() domain.RecognitionRepository {
 	if s.recognitionRepository == nil {
 		s.recognitionRepository = &RecognitionRepository{
 			store: s,
