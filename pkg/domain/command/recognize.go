@@ -5,6 +5,8 @@ import (
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
+
+	"github.com/opencars/alpr/pkg/domain/model"
 )
 
 type Recognize struct {
@@ -23,4 +25,9 @@ func (c *Recognize) Validate() error {
 	)
 }
 
-func (c *Recognize) Event() {}
+func (c *Recognize) Event(result *model.Result) *model.Event {
+	return &model.Event{
+		URL:    c.URL,
+		Number: result.Plate,
+	}
+}

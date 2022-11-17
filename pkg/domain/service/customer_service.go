@@ -8,7 +8,6 @@ import (
 	"net/http"
 
 	"github.com/opencars/seedwork"
-	"github.com/opencars/seedwork/logger"
 
 	"github.com/opencars/alpr/pkg/domain"
 	"github.com/opencars/alpr/pkg/domain/command"
@@ -79,13 +78,8 @@ func (s *CustomerService) Recognize(ctx context.Context, c *command.Recognize) (
 	}
 
 	if len(res) > 0 {
-		err := s.pub.Publish(&model.Event{
-			URL:    c.URL,
-			Number: res[0].Plate,
-		})
-
-		if err != nil {
-			logger.Errorf("publish: %v", err)
+		if err := s.pub.Publish(c.Event(&res[0])); err != nil {
+			return nil, err
 		}
 	}
 
