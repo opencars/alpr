@@ -7,6 +7,7 @@ import (
 
 	"github.com/opencars/alpr/pkg/domain/command"
 	"github.com/opencars/alpr/pkg/domain/model"
+	"github.com/opencars/alpr/pkg/domain/query"
 )
 
 type Store interface {
@@ -19,7 +20,7 @@ type RecognitionRepository interface {
 }
 
 type InternalService interface {
-	ListRecognitions(ctx context.Context, number string) ([]model.Recognition, error)
+	ListRecognitions(context.Context, *query.List) ([]model.Recognition, error)
 }
 
 type CustomerService interface {

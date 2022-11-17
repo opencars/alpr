@@ -5,21 +5,21 @@ import (
 
 	"github.com/opencars/alpr/pkg/domain"
 	"github.com/opencars/alpr/pkg/domain/model"
+	"github.com/opencars/alpr/pkg/domain/query"
 )
 
 type InternalService struct {
-	recognizer domain.Recognizer
-	obj        domain.ObjectStore
+	repo domain.RecognitionRepository
+	obj  domain.ObjectStore
 }
 
-func NewInternalService(rec domain.Recognizer, obj domain.ObjectStore) *InternalService {
+func NewInternalService(repo domain.RecognitionRepository, obj domain.ObjectStore) *InternalService {
 	return &InternalService{
-		recognizer: rec,
-		obj:        obj,
+		repo: repo,
+		obj:  obj,
 	}
 }
 
-func (svc *InternalService) ListRecognitions(ctx context.Context, number string) ([]model.Recognition, error) {
-
+func (s *InternalService) ListRecognitions(ctx context.Context, q *query.List) ([]model.Recognition, error) {
 	return nil, nil
 }
