@@ -12,7 +12,7 @@ type alprHandler struct {
 	api *API
 }
 
-func (h *alprHandler) ListByNumber(ctx context.Context, r *alpr.NumberRequest) (*alpr.Response, error) {
+func (h *alprHandler) FindByNumber(ctx context.Context, r *alpr.NumberRequest) (*alpr.Response, error) {
 	q := query.List{
 		Number: r.Number,
 	}
