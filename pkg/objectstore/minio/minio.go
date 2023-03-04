@@ -31,13 +31,8 @@ func New(s3 *config.S3) (*ObjectStore, error) {
 
 // Put uploads new image to S3 bucket.
 func (s *ObjectStore) Put(ctx context.Context, key string, r *bytes.Reader) error {
-	userMetaData := map[string]string{
-		"x-amz-acl": "public-read",
-	}
-
 	opts := minio.PutObjectOptions{
-		UserMetadata: userMetaData,
-		ContentType:  "image/jpeg",
+		ContentType: "image/jpeg",
 	}
 
 	_, err := s.client.PutObjectWithContext(ctx, s.bucket, key, r, -1, opts)
