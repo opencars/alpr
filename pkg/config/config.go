@@ -15,7 +15,7 @@ type Config struct {
 	OpenALPR OpenALPR `yaml:"openalpr"`
 	S3       S3       `yaml:"s3"`
 	DB       Database `yaml:"database"`
-	EventAPI EventAPI `yaml:"event_api"`
+	NATS     NATS     `yaml:"nats"`
 }
 
 // Server represents settings for creating http server.
@@ -66,13 +66,13 @@ func (db *Database) Address() string {
 	return db.Host + ":" + strconv.Itoa(db.Port)
 }
 
-type EventAPI struct {
+type NATS struct {
 	Enabled bool   `yaml:"enabled"`
 	Host    string `yaml:"host"`
 	Port    int    `yaml:"port"`
 }
 
-func (api *EventAPI) Address() string {
+func (api *NATS) Address() string {
 	return fmt.Sprintf("nats://%s:%d", api.Host, api.Port)
 }
 

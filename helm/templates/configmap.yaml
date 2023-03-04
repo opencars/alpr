@@ -30,7 +30,7 @@ data:
       password: NvBD8kieBorVaWUh
       database: alpr
       ssl_mode: require
-    event_api:
+    nats:
       enabled: false
       host: "nats.prod.svc.cluster.local"
       port: 4222

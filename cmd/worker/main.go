@@ -150,7 +150,7 @@ func main() {
 		logger.Fatalf("store: %v", err)
 	}
 
-	sub, err := nats.New(conf.EventAPI.Address(), conf.EventAPI.Enabled)
+	sub, err := nats.New(conf.NATS.Address(), conf.NATS.Enabled)
 	if err != nil {
 		logger.Fatalf("nats: %v", err)
 	}

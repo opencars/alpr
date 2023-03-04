@@ -35,7 +35,7 @@ func main() {
 		logger.Fatalf("failed to initialize recognizer: %v", err)
 	}
 
-	pub, err := nats.New(conf.EventAPI.Address(), conf.EventAPI.Enabled)
+	pub, err := nats.New(conf.NATS.Address(), conf.NATS.Enabled)
 	if err != nil {
 		logger.Fatalf("nats: %v", err)
 	}

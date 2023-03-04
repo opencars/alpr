@@ -31,7 +31,7 @@ database:
   database: "alpr"
   ssl_mode: "disable"
 
-event_api:
+nats:
   enabled: true
   host: "127.0.0.1"
   port: 4222
