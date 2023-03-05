@@ -3,14 +3,12 @@ package main
 import (
 	"context"
 	"flag"
-	"fmt"
 	"log"
 	"net"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
 	"github.com/opencars/seedwork/logger"
 
@@ -46,11 +44,27 @@ func (w *worker) process(ctx context.Context, imagesPath string) error {
 
 		result, err := w.r.Recognize(f)
 		if err != nil {
-			return err
+			logger.Errorf("error: %s", err)
+			continue
 		}
 
-		time.Sleep(time.Second)
-		fmt.Println(result)
+		if len(result) == 0 {
+			logger.Errorf("result not found")
+			continue
+		}
+
+		for _, number := range result {
+			logger.Infof("detected: %s", number.Plate)
+
+			err = w.db.Recognition().Create(ctx, &model.Recognition{
+				ImageKey: "plates/" + e.Name(),
+				Plate:    number.Plate,
+			})
+
+			if err != nil {
+				logger.Errorf("db error: %s", err)
+			}
+		}
 	}
 
 	return nil
@@ -120,7 +134,7 @@ func main() {
 		cancel()
 	}()
 
-	logger.Infof("listening events from queue")
+	logger.Infof("parsing images")
 	w := newWorker(sub, obj, sql, recognizer)
 	if err := w.process(ctx, imagesPath); err != nil {
 		logger.Fatalf("process: %v", err)
