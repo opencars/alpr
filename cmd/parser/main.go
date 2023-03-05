@@ -39,19 +39,25 @@ func (w *worker) process(ctx context.Context, imagesPath string) error {
 	for _, e := range entries {
 		f, err := os.Open(imagesPath + "/" + e.Name())
 		if err != nil {
+			f.Close()
+			logger.Errorf("failed to open: %s", err)
 			return err
 		}
 
 		result, err := w.r.Recognize(f)
 		if err != nil {
 			logger.Errorf("error: %s", err)
+			f.Close()
 			continue
 		}
 
 		if len(result) == 0 {
 			logger.Errorf("result not found")
+			f.Close()
 			continue
 		}
+
+		var failed bool
 
 		for _, number := range result {
 			logger.Infof("detected: %s", number.Plate)
@@ -63,12 +69,21 @@ func (w *worker) process(ctx context.Context, imagesPath string) error {
 
 			if err != nil {
 				logger.Errorf("db error: %s", err)
+				failed = true
 			}
 		}
 
-		if err := os.Remove(imagesPath + "/" + e.Name()); err != nil {
-			return err
+		if !failed {
+			logger.Infof("success: %s", e.Name())
+
+			if err := os.Remove(imagesPath + "/" + e.Name()); err != nil {
+				logger.Errorf("db error: %s", err)
+				f.Close()
+				continue
+			}
 		}
+
+		f.Close()
 	}
 
 	return nil
