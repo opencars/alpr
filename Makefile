@@ -1,5 +1,5 @@
 .PHONY: default build clean
-APPS        := server worker grpc-server
+APPS        := server worker grpc-server parser
 BLDDIR      ?= bin
 IMPORT_BASE := github.com/opencars/alpr
 
