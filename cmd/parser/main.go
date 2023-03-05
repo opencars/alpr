@@ -65,6 +65,10 @@ func (w *worker) process(ctx context.Context, imagesPath string) error {
 				logger.Errorf("db error: %s", err)
 			}
 		}
+
+		if err := os.Remove(imagesPath + "/" + e.Name()); err != nil {
+			return err
+		}
 	}
 
 	return nil
