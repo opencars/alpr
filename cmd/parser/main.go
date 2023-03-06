@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"flag"
-	"log"
 	"net"
 	"net/http"
 	"os"
@@ -31,39 +30,31 @@ type worker struct {
 }
 
 func (w *worker) process(ctx context.Context, imagesPath string) error {
-	entries, err := os.ReadDir(imagesPath)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	for _, e := range entries {
-		f, err := os.Open(imagesPath + "/" + e.Name())
+	iter := func(imagesPath, name string) error {
+		f, err := os.Open(imagesPath + "/" + name)
 		if err != nil {
-			f.Close()
 			logger.Errorf("failed to open: %s", err)
-			return err
+			return nil
 		}
+		defer f.Close()
 
 		result, err := w.r.Recognize(f)
 		if err != nil {
 			logger.Errorf("error: %s", err)
-			f.Close()
-			continue
+			return nil
 		}
 
 		if len(result) == 0 {
 			logger.Errorf("result not found")
-			f.Close()
-			continue
+			return nil
 		}
 
 		var failed bool
-
 		for _, number := range result {
 			logger.Infof("detected: %s", number.Plate)
 
 			err = w.db.Recognition().Create(ctx, &model.Recognition{
-				ImageKey: "plates/" + e.Name(),
+				ImageKey: "plates/" + name,
 				Plate:    number.Plate,
 			})
 
@@ -74,16 +65,29 @@ func (w *worker) process(ctx context.Context, imagesPath string) error {
 		}
 
 		if !failed {
-			logger.Infof("success: %s", e.Name())
+			logger.Infof("success: %s", name)
 
-			if err := os.Remove(imagesPath + "/" + e.Name()); err != nil {
+			if err := os.Remove(imagesPath + "/" + name); err != nil {
 				logger.Errorf("db error: %s", err)
-				f.Close()
-				continue
+				return nil
 			}
 		}
 
-		f.Close()
+		return nil
+	}
+
+	entries, err := os.ReadDir(imagesPath)
+	if err != nil {
+		return err
+	}
+
+	logger.Infof("count of files in the folder: %d", len(entries))
+
+	for _, e := range entries {
+		if err := iter(imagesPath, e.Name()); err != nil {
+			logger.Errorf("err: %s", err)
+			return nil
+		}
 	}
 
 	return nil
